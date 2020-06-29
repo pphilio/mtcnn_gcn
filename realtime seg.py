@@ -80,7 +80,7 @@ def main():
     threshold = [0.6, 0.7, 0.7]  # three steps's threshold
     factor = 0.709  # scale factor
 
-    video_capture = cv2.VideoCapture('./MANYFACE.mp4')
+    video_capture = cv2.VideoCapture('./test.mp4')
 
     fps=video_capture.get(cv2.CAP_PROP_FPS)
     width = video_capture.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -154,7 +154,6 @@ def main():
                 start_time = time.time()
                 frame_count = 0
             # add_overlays(frame, faces, frame_rate,frame_num)
-
             cv2.rectangle(frame, (int(det[0]), int(det[1])), (int(det[2]), int(det[3])),(255,0,0),3)
             #detection 끝
             cv2.imshow('Video', frame)
@@ -237,13 +236,23 @@ def main():
         # print(bbox[2])
         dif_x=((128-(bbox[3]-bbox[1]))/2)
         dif_y=(128-(bbox[2]-bbox[0]))/2
-        # print(dif_x)
-        # print(dif_y)
+        print(dif_x)
+        print(dif_y)
         # print(original.shape)
-        face=original[bbox[1]:bbox[3],bbox[0]:bbox[2]]
-        mask=img[int(dif_x):int(128 - dif_x), int(dif_y):int(128 - dif_y)]
+        if ((bbox[3]-bbox[1])>128) :
+            bbox[3]+=dif_x
+            bbox[1]-=dif_x
+        if ((bbox[2] - bbox[0]) > 128):
+            bbox[2] += dif_y
+            bbox[0] -= dif_y
 
-        if dif_x>0 and dif_y>0:
+        if (dif_x) < 0: dif_x = 0
+        if (dif_y) < 0: dif_y = 0
+        if dif_x>=0 and dif_y>=0:
+            print(img[int(dif_x):int(128 - dif_x), int(dif_y):int(128 - dif_y)].shape)
+            print(original[bbox[1]:bbox[3], bbox[0]:bbox[2]].shape)
+            face = original[bbox[1]:bbox[3], bbox[0]:bbox[2]]
+            mask = img[int(dif_x):int(128 - dif_x), int(dif_y):int(128 - dif_y)]
             idx=(mask!=0)
             face[idx]=mask[idx]
             # print(dif_x,dif_y)
@@ -258,7 +267,7 @@ def main():
             # cv2.imshow("bitwise",bitwiseor)
         else :
             pass
-            #이외의 예외처리 진행해야함
+            # 예외처리완료
             # print(dif_x, dif_y)
             # bitwiseor = cv2.bitwise_or(original[bbox[1] + int(dif_x):bbox[3] - int(128 - dif_x),bbox[0] + int(dif_y):bbox[2] - int(128 - dif_y)], img)
             # cv2.imshow("bitwise", bitwiseor)
