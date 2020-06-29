@@ -1,0 +1,11 @@
+.idea
+checkpoint
+data
+input
+output
+face_frames
+*.mp4
+*.jpg
+*.png
+*.avi
+*.gif
